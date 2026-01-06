@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { join } from 'path';
 import { BooksModule } from './books/books.module';
+import { AuthModule } from './auth/auth.module';
 
 
 @Module({
@@ -23,9 +24,12 @@ import { BooksModule } from './books/books.module';
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
       sortSchema: true,
       playground: true,
+      path: '/books',
     }),
 
     BooksModule,
+
+    AuthModule,
     
   ],
 })

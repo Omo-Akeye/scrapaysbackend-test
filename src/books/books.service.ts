@@ -1,26 +1,42 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateBookInput } from './dto/create-book.input';
 import { UpdateBookInput } from './dto/update-book.input';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Book } from './entities/book.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class BooksService {
+  constructor(
+    @InjectRepository(Book) private booksRepository: Repository<Book>,
+  ) {}
+
   create(createBookInput: CreateBookInput) {
-    return 'This action adds a new book';
+    const newBook = this.booksRepository.create(createBookInput);
+    return this.booksRepository.save(newBook);
   }
 
   findAll() {
-    return `This action returns all books`;
+    return this.booksRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} book`;
+  
+  async findOne(id: string) {
+    const book = await this.booksRepository.findOneBy({ id });
+    if (!book) throw new NotFoundException(`Book #${id} not found`);
+    return book;
   }
 
-  update(id: number, updateBookInput: UpdateBookInput) {
-    return `This action updates a #${id} book`;
+
+  async update(id: string, updateBookInput: UpdateBookInput) {
+    const book = await this.findOne(id);
+    const updatedBook = { ...book, ...updateBookInput };
+    return this.booksRepository.save(updatedBook);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} book`;
+  async remove(id: string) {
+    const book = await this.findOne(id);
+    await this.booksRepository.remove(book);
+    return { ...book, id };
   }
 }

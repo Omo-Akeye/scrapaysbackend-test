@@ -20,19 +20,21 @@ export class BooksService {
     return this.booksRepository.find();
   }
 
-  async findOne(id: number) {
+  async findOne(id: string) {
+   
     const book = await this.booksRepository.findOneBy({ id });
     if (!book) throw new NotFoundException(`Book #${id} not found`);
     return book;
   }
 
-  async update(id: number, updateBookInput: UpdateBookInput) {
+  async update(id: string, updateBookInput: UpdateBookInput) {
     const book = await this.findOne(id);
     const updated = { ...book, ...updateBookInput };
     return this.booksRepository.save(updated);
   }
 
-  async remove(id: number) {
+
+  async remove(id: string) {
     const book = await this.findOne(id);
     await this.booksRepository.remove(book);
     return { ...book, id };
