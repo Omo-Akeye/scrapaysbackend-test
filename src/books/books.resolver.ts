@@ -1,4 +1,4 @@
-import { Resolver, Query, Mutation, Args, ID,Int } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, ID, Int } from '@nestjs/graphql';
 import { BooksService } from './books.service';
 import { Book } from './entities/book.entity';
 import { CreateBookInput } from './dto/create-book.input';
@@ -8,14 +8,9 @@ import { GqlAuthGuard } from '../auth/gql-auth.guard';
 import { PaginatedBooks } from './entities/paginated-books.output';
 
 @Resolver(() => Book)
-@UseGuards(GqlAuthGuard)
+
 export class BooksResolver {
   constructor(private readonly booksService: BooksService) {}
-
-  @Mutation(() => Book)
-  createBook(@Args('createBookInput') createBookInput: CreateBookInput) {
-    return this.booksService.create(createBookInput);
-  }
 
 
   @Query(() => PaginatedBooks, { name: 'books' }) 
@@ -28,20 +23,26 @@ export class BooksResolver {
   }
 
   @Query(() => Book, { name: 'book' })
-
   findOne(@Args('id', { type: () => ID }) id: string) {
     return this.booksService.findOne(id);
   }
 
+
+  @UseGuards(GqlAuthGuard) 
+  @Mutation(() => Book)
+  createBook(@Args('createBookInput') createBookInput: CreateBookInput) {
+    return this.booksService.create(createBookInput);
+  }
+
+  @UseGuards(GqlAuthGuard) 
   @Mutation(() => Book)
   updateBook(@Args('updateBookInput') updateBookInput: UpdateBookInput) {
     return this.booksService.update(updateBookInput.id, updateBookInput);
   }
 
+  @UseGuards(GqlAuthGuard)
   @Mutation(() => Book)
-
   removeBook(@Args('id', { type: () => ID }) id: string) {
     return this.booksService.remove(id);
   }
-
 }
