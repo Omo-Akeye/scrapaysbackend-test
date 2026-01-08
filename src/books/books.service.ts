@@ -16,10 +16,13 @@ export class BooksService {
     return this.booksRepository.save(newBook);
   }
 
-  findAll() {
-    return this.booksRepository.find();
-  }
 
+async findAll(limit: number, offset: number) {
+    return this.booksRepository.findAndCount({
+      take: limit,  
+      skip: offset, 
+    });
+  }
   
   async findOne(id: string) {
     const book = await this.booksRepository.findOneBy({ id });
@@ -39,4 +42,6 @@ export class BooksService {
     await this.booksRepository.remove(book);
     return { ...book, id };
   }
+
+
 }

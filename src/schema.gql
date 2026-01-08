@@ -19,9 +19,14 @@ type Mutation {
   updateBook(updateBookInput: UpdateBookInput!): Book!
 }
 
+type PaginatedBooks {
+  items: [Book!]!
+  total: Int!
+}
+
 type Query {
   book(id: ID!): Book!
-  books: [Book!]!
+  books(limit: Int! = 10, offset: Int! = 0): PaginatedBooks!
 }
 
 input UpdateBookInput {
